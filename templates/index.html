@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %}Inicio {% endblock %}
+
+{% block content %}
+
+    <form>
+        <input type="text" name="search">
+        <button>Buscar</button>
+    </form>
+    <div id="mapid" style="height: 480px;"></div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    (function() {
+        var location;
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              save_user_location(position.coords.latitude, position.coords.longitude);
+              console.log(location)
+            }, function (error) {
+                console.log(error)
+            }, {maximumAge:60000, timeout:5000, enableHighAccuracy:true});
+        } else {
+          alert("geo localizacion no disponible")
+        }
+
+        function save_user_location(latitude, longitude) {
+            location = { latitude: latitude, longitude: longitude }
+            var mymap = new L.Map('mapid')
+            var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+            var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 25, attribution: osmAttrib});       
+
+            // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'}).addTo(mymap);
+            mymap.setView([latitude, longitude], 19);
+
+            mymap.addLayer(osm)
+
+        }
+    })()
+</script>
+{% endblock %}
